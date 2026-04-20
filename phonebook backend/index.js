@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const morgan = require("morgan");
+
+app.use(morgan("tiny"));
 app.use(express.json());
 
 let contacts = [
@@ -84,5 +87,12 @@ if (contacts.find((contact) => contact.name === body.name)) {
   response.json(contact)
 });
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+app.use(unknownEndpoint);
+
 const PORT = 3001;
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
