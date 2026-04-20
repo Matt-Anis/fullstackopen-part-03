@@ -1,8 +1,19 @@
 const express = require("express");
 const app = express();
-const morgan = require("morgan");
+const morgan = require('morgan');
 
-app.use(morgan("tiny"));
+app.use(morgan((tokens, req, res) => {
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, "content-length"),
+    "-",
+    tokens["response-time"](req, res),
+    "ms",
+    JSON.stringify(req.body),
+  ].join(" ");
+}));
 app.use(express.json());
 
 let contacts = [
@@ -70,7 +81,7 @@ app.post("/api/persons", (request, response) => {
       error: "missing data",
     });
   }
-if (contacts.find((contact) => contact.name === body.name)) {
+  if (contacts.find((contact) => contact.name === body.name)) {
     return response.status(400).json({
       error: "name must be unique",
     });
@@ -81,10 +92,10 @@ if (contacts.find((contact) => contact.name === body.name)) {
     id: id,
     name: body.name,
     number: body.number,
-  }
+  };
 
   contacts = contacts.concat(contact);
-  response.json(contact)
+  response.json(contact);
 });
 
 const unknownEndpoint = (request, response) => {
