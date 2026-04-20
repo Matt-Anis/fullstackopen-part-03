@@ -67,6 +67,12 @@ app.post("/api/persons", (request, response) => {
       error: "missing data",
     });
   }
+if (contacts.find((contact) => contact.name === body.name)) {
+    return response.status(400).json({
+      error: "name must be unique",
+    });
+  }
+
   const id = Math.round(Math.random() * 1000000 + 1);
   const contact = {
     id: id,
