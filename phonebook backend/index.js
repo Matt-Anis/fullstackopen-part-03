@@ -25,41 +25,58 @@ let contacts = [
   },
 ];
 
+app.get("/api/persons", (request, response) => {
+  response.json(contacts);
+});
 
-app.get('/api/persons', (request, response) => {
-    response.json(contacts)
-})
+app.get("/info", (request, response) => {
+  const date = new Date();
+  console.log(date);
 
-app.get('/info', (request, response) => {
-    const date = new Date()
-    console.log(date);
-    
-    response.send(`<p>Phonebook has info for ${contacts.length} people</p>
-        <p>${date}</p>`)
-})
+  response.send(`<p>Phonebook has info for ${contacts.length} people</p>
+        <p>${date}</p>`);
+});
 
-app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const contact = contacts.find( contact => contact.id === id)
+app.get("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  const contact = contacts.find((contact) => contact.id === id);
 
-    if(contact) {
-        response.json(contact)
-    } else {
-        response.status(404).end()
-    }
-})
+  if (contact) {
+    response.json(contact);
+  } else {
+    response.status(404).end();
+  }
+});
 
-app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const contact = contacts.find( contact => contact.id === id)
+app.delete("/api/persons/:id", (request, response) => {
+  const id = request.params.id;
+  const contact = contacts.find((contact) => contact.id === id);
 
-     if(contact) {
-        contacts = contacts.filter(contact => contact.id !== id)
-        response.status(204).end()
-    } else {
-        response.status(404).end()
-    }
-})
+  if (contact) {
+    contacts = contacts.filter((contact) => contact.id !== id);
+    response.status(204).end();
+  } else {
+    response.status(404).end();
+  }
+});
 
-const PORT = 3001
-app.listen(PORT)
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: "missing data",
+    });
+  }
+  const id = Math.round(Math.random() * 1000000 + 1);
+  const contact = {
+    id: id,
+    name: body.name,
+    number: body.number,
+  }
+
+  contacts = contacts.concat(contact);
+  response.json(contact)
+});
+
+const PORT = 3001;
+app.listen(PORT);
