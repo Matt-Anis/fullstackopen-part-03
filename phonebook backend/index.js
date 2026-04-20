@@ -49,5 +49,17 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
+app.delete('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const contact = contacts.find( contact => contact.id === id)
+
+     if(contact) {
+        contacts = contacts.filter(contact => contact.id !== id)
+        response.status(204).end()
+    } else {
+        response.status(404).end()
+    }
+})
+
 const PORT = 3001
 app.listen(PORT)
