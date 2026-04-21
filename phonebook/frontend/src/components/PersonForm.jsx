@@ -54,7 +54,16 @@ const PersonForm = ({ persons, setPersons, setNotification }) => {
         setPersons(persons.concat(newPerson));
         setNewName("");
         setNewNumber("");
-      });
+      })
+      .catch( error => {
+        setNotification( {
+          message: `error adding ${newName}: ${error.response.data.error}`,
+          isError: true
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      })
     }
   };
 
