@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const morgan = require('morgan');
+const cors = require('cors')
 
 app.use(morgan((tokens, req, res) => {
   return [
@@ -15,6 +16,7 @@ app.use(morgan((tokens, req, res) => {
   ].join(" ");
 }));
 app.use(express.json());
+app.use(cors())
 
 let contacts = [
   {
