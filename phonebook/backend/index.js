@@ -49,16 +49,15 @@ app.get("/api/persons/:id", (request, response) => {
   })
 });
 
-app.delete("/api/persons/:id", (request, response) => {
-  const id = request.params.id.toString();
-  const contact = contacts.find((contact) => contact.id === id);
-
-  if (contact) {
-    contacts = contacts.filter((contact) => contact.id !== id);
-    response.status(204).end();
-  } else {
-    response.status(404).end();
-  }
+app.delete("/api/persons/:id", (request, response, next) => {
+  Contact.findByIdAndDelete(request.params.id)
+    .then(contact => {
+      response.status(204).end()
+    })
+    .catch(error =>  {
+      console.log(error)
+      next(error)
+    })
 });
 
 app.post("/api/persons", (request, response) => {
