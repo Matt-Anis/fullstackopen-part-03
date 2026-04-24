@@ -39,17 +39,18 @@ app.get("/info", (request, response) => {
 
 app.get("/api/persons/:id", (request, response) => {
   const id = request.params.id;
-  const contact = contacts.find((contact) => contact.id === id);
-
-  if (contact) {
-    response.json(contact);
-  } else {
-    response.status(404).end();
-  }
+  Contact.findById(id)
+    .then(contact => {
+      response.json(contact)
+    })
+  .catch(error => {
+    console.log(error)
+    response.status(404).end()
+  })
 });
 
 app.delete("/api/persons/:id", (request, response) => {
-  const id = request.params.id;
+  const id = request.params.id.toString();
   const contact = contacts.find((contact) => contact.id === id);
 
   if (contact) {
@@ -67,21 +68,27 @@ app.post("/api/persons", (request, response) => {
       error: "missing data",
     });
   }
-  if (contacts.find((contact) => contact.name === body.name)) {
-    return response.status(400).json({
-      error: "name must be unique",
+
+  Contact.findOne({ name: body.name })
+    .then((existingContact) => {
+      if (existingContact) {
+        return response.status(400).json({
+          error: "name must be unique",
+        });
+      }
+
+      const contact = new Contact({
+        name: body.name,
+        number: body.number,
+      });
+
+      return contact.save().then((savedContact) => {
+        response.json(savedContact);
+      });
+    })
+    .catch((error) => {
+      response.status(400).json({ error: error.message });
     });
-  }
-
-  const id = Math.round(Math.random() * 1000000 + 1);
-  const contact = {
-    id: id,
-    name: body.name,
-    number: body.number,
-  };
-
-  contacts = contacts.concat(contact);
-  response.json(contact);
 });
 
 const unknownEndpoint = (request, response) => {
