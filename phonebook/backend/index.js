@@ -4,6 +4,7 @@ const Contact = require("./models/contact");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+const opts = { runValidators: true };
 
 app.use(
   morgan((tokens, req, res) => {
