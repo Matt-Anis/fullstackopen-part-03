@@ -1,10 +1,10 @@
 require("dotenv").config();
+const process = require("process");
 const express = require("express");
 const Contact = require("./models/contact");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
-const opts = { runValidators: true };
 
 app.use(
   morgan((tokens, req, res) => {
@@ -41,23 +41,23 @@ app.get("/info", (request, response) => {
 app.get("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
   Contact.findById(id)
-    .then(contact => {
-      response.json(contact)
+    .then((contact) => {
+      response.json(contact);
     })
-  .catch(error => {
-    next(error)
-  })
+    .catch((error) => {
+      next(error);
+    });
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Contact.findByIdAndDelete(request.params.id)
-    .then(contact => {
-      response.status(204).end()
+    .then(() => {
+      response.status(204).end();
     })
-    .catch(error =>  {
-      console.log(error)
-      next(error)
-    })
+    .catch((error) => {
+      console.log(error);
+      next(error);
+    });
 });
 
 app.post("/api/persons", (request, response, next) => {
@@ -86,12 +86,9 @@ app.post("/api/persons", (request, response, next) => {
       });
     })
     .catch((error) => {
-      next(error)
+      next(error);
     });
 });
-
-
-
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
@@ -111,7 +108,7 @@ const errorHandler = (error, request, response, next) => {
 };
 app.use(errorHandler);
 
-const PORT = process.env.PORT 
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
